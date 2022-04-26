@@ -1,0 +1,11 @@
+*.iml
+.idea
+*.db
+__pycache__
+.pytest_cache
+
+*.pdf
+/Scripts
+/Lib
+/Include
+pyvenv.cfg
