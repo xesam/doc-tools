@@ -86,7 +86,8 @@ def pages_to_indexes(*pages):
 
 if __name__ == '__main__':
     pass
-    test_pdf_path_1 = "C:/Users/xe/Desktop/1-4/22-轻1-注会-税法【1-4章】-unlock.pdf"
+    # test_pdf_path_1 = "C:/Users/xe/Desktop/1-4/22-轻1-注会-税法【1-4章】-unlock.pdf"
+    test_pdf_path_1 = "C:/Users/xe/Desktop/pdfs/注会财管-公式大全.pdf"
     starts = [1, 25, 64, 210, 279]
     indexes = pages_to_indexes(*starts)
     test_splits = list(create_splits(*indexes))
