@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1060</width>
-    <height>734</height>
+    <width>890</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>华华打他</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="gridLayoutWidget">
@@ -52,7 +52,7 @@
      <rect>
       <x>20</x>
       <y>380</y>
-      <width>401</width>
+      <width>851</width>
       <height>101</height>
      </rect>
     </property>
@@ -83,7 +83,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioSaveSame">
+       <widget class="QRadioButton" name="radioSaveMerge">
         <property name="text">
          <string>保存到同一个文件中</string>
         </property>
@@ -134,25 +134,31 @@
        <number>0</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,7">
         <item>
          <widget class="QRadioButton" name="radioPages">
           <property name="text">
            <string>指定页面：</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_2">
+         <widget class="QLineEdit" name="editPages">
           <property name="placeholderText">
            <string>数字之间使用逗号分割；比如 1,3,5,7-13</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,7">
         <item>
          <widget class="QRadioButton" name="radioPageStarts">
           <property name="text">
@@ -161,9 +167,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_3">
+         <widget class="QLineEdit" name="editPageStarts">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="placeholderText">
            <string>数字之间使用逗号分割；比如 10,20,30,40</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -200,8 +212,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1060</width>
-     <height>26</height>
+     <width>890</width>
+     <height>23</height>
     </rect>
    </property>
   </widget>
