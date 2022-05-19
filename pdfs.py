@@ -7,7 +7,6 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 def _extract_range(in_pdf, page_range):
     """抽取指定页"""
     pages = []
-
     for page_index in range(*page_range):
         pages.append(in_pdf.getPage(page_index))
     return pages
@@ -25,60 +24,6 @@ def _extract_ranges_to_pdf(in_pdf, out_pdf, *page_ranges):
     """抽取指定页并添加到 out_file 的尾部"""
     for page_range in page_ranges:
         _extract_range_to_pdf(in_pdf, out_pdf, page_range)
-
-
-def _extract(in_pdf_file, *pages):
-    """抽取指定页"""
-    output = PdfFileWriter()
-    for page_index in pages:
-        output.addPage(in_pdf_file.getPage(page_index))
-    return output
-
-
-def _extract_to_file(in_pdf_path, out_pdf_path, *pages):
-    with open(in_pdf_path, 'rb') as in_pdf:
-        pdf_file = PdfFileReader(in_pdf)
-        with open(out_pdf_path, 'ab') as out_pdf:
-            output = _extract(pdf_file, *pages)
-            output.write(out_pdf)
-
-
-def pdf_split_old(pdf_in, pdf_out, start, end):
-    pass
-    output = PdfFileWriter()
-    with open(pdf_in, 'rb') as in_pdf:
-        pdf_file = PdfFileReader(in_pdf)
-        for i in range(start, end):
-            output.addPage(pdf_file.getPage(i))
-        with open(pdf_out, 'ab') as out_pdf:
-            output.write(out_pdf)
-
-
-def pdf_split(pdf_in_path, pdf_out_path, start, end):
-    pass
-    output = PdfFileWriter()
-    with open(pdf_in_path, 'rb') as in_pdf:
-        pdf_file = PdfFileReader(in_pdf)
-        page_end = end if end != -1 else pdf_file.numPages
-        for i in range(start, page_end):
-            output.addPage(pdf_file.getPage(i))
-        with open(pdf_out_path, 'ab') as out_pdf:
-            output.write(out_pdf)
-
-
-def pdf_split2(pdf_in, pdf_out, start, end):
-    output = PdfFileWriter()
-    pdf_file = PdfFileReader(pdf_in)  # todo 这里不用重复创建
-    for i in range(start, end):
-        output.addPage(pdf_file.getPage(i))
-    output.write(pdf_out)
-
-
-def split(pdf_in_path, pdf_out_path, splits):
-    with open(pdf_in_path, 'rb') as in_pdf:
-        with open(pdf_out_path, 'ab') as out_pdf:
-            for start, end in splits:
-                pdf_split(in_pdf, out_pdf, start, end)
 
 
 def add_suffix(file_path, suffix):
@@ -138,9 +83,9 @@ def _extract_to_split_pdf(in_pdf_file_path, page_ranges):
 
 
 def t():
-    test_in_pdf_file_path = "C:/Users/xe/Desktop/pdfs/22-轻1-注会-税法【1-4章】-unlock.pdf"
+    test_in_pdf_file_path = "./1.pdf"
     page_ranges = [[1, 2], [3, 4]]
-    _extract_to_split_pdf(test_in_pdf_file_path, page_ranges)
+    _extract_to_merged_pdf(test_in_pdf_file_path, add_suffix(test_in_pdf_file_path, 'out'), page_ranges)
     # test_in_pdf_file_path = prepare_unlock(test_in_pdf_file_path)
     # with open(test_in_pdf_file_path, 'rb') as in_pdf_file:
     #     in_pdf = PdfFileReader(in_pdf_file)
