@@ -26,11 +26,11 @@ class UnlockWorker(QThread):
 
 
 class PdfWorker(QThread):
-    resultSignal = pyqtSignal(object)
+    completeSignal = pyqtSignal(object)
 
-    def __init__(self, in_file_path):
+    def __init__(self, task_info):
         super().__init__()
-        self._in_file_path = in_file_path
+        self._task_info = task_info
 
     def run(self):
         pdfs.extract_to_pdf(self._in_file_path,
@@ -39,7 +39,7 @@ class PdfWorker(QThread):
                             output_mode=output_mode,
                             out_path=output_path,
                             out_dir=output_dir)
-        self.resultSignal.emit(True)
+        self.completeSignal.emit(True)
 
 
 class LcdTimer(QThread):
@@ -134,8 +134,14 @@ class MainUI(QMainWindow, Ui_MainWindow):
                 self.stackedOutout.setCurrentIndex(1)
 
     def on_unlocked_successful(self, file_path):
-        print(file_path)
-        pass
+        self.pdfWorker = PdfWorker({"in_path": file_path,
+                                    "extract_mode": extract_mode,
+                                    "pages": page_collections,
+                                    "output_mode": output_mode,
+                                    "out_path": output_path,
+                                    "out_dir": output_dir})
+        self.pdfWorker.completeSignal.connect(self.on_process_completed)
+        self.pdfWorker.start()
 
     def on_process_completed(self, result):
         if result:
@@ -170,12 +176,8 @@ class MainUI(QMainWindow, Ui_MainWindow):
         page_collections = self.get_page_collections()
 
         self.unlockWorker = UnlockWorker(opened_file_path)
-        self.unlockWorker.unlockSignal.connect(self.on_unlocked_successful)
+        self.unlockWorker.unlockSignal.connect(lambda: self.on_unlocked_successful())
         self.unlockWorker.start()
-
-        self.pdfWorker = PdfWorker(opened_file_path)
-        self.pdfWorker.resultSignal.connect(self.on_process_successful)
-        self.pdfWorker.start()
 
 
 if __name__ == "__main__":

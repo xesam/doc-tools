@@ -72,7 +72,7 @@ def extract_to_diff_pdf(in_pdf_file_path, out_pdf_dir, *page_collections):
                 out_pdf.write(out_pdf_file)
 
 
-def extract_to_pdf(in_pdf_file_path,
+def extract_to_pdf(in_path=None,
                    extract_mode=ExtractMode.Pages,
                    pages=None,
                    output_mode=OutputMode.Merge,
