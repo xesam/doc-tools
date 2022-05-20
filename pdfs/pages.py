@@ -60,8 +60,3 @@ class FragmentPage(PageCollection):
 
     def get_collection_name(self):
         return f'分割集'
-
-#
-# def parse_fragments(page_count, *fragment_starts):
-#     fragment_ends = list(fragment_starts)[1:] + [page_count + 1]
-#     return [RangePageCollection(start, end - 1) for start, end in zip(fragment_starts, fragment_ends)]

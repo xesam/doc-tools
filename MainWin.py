@@ -148,7 +148,7 @@ class Ui_MainWindow(object):
         self.lcdRunning.setObjectName("lcdRunning")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 890, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 890, 23))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -173,7 +173,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "华华打他"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "华华工具箱"))
         self.editOpenedFile.setPlaceholderText(_translate("MainWindow", "请选择输入文件"))
         self.label.setText(_translate("MainWindow", "选择文件："))
         self.btnOpenFile.setText(_translate("MainWindow", "选择"))

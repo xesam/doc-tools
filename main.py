@@ -8,8 +8,10 @@ from PyQt5.QtWidgets import *
 from gui import parser
 from pdfs import pdfs
 from pdfs.modes import ExtractMode, OutputMode
+from loggers import logger
 
 cgitb.enable(format='text')
+_VERSION = '0.0.1'
 
 
 class UnlockWorker(QThread):
@@ -20,7 +22,6 @@ class UnlockWorker(QThread):
         self._in_file_path = in_file_path
 
     def run(self) -> None:
-        print('start')
         unlocked = pdfs.prepare_unlock(self._in_file_path)
         self.unlockSignal.emit(unlocked)
 
@@ -28,17 +29,12 @@ class UnlockWorker(QThread):
 class PdfWorker(QThread):
     completeSignal = pyqtSignal(object)
 
-    def __init__(self, task_info):
+    def __init__(self, task):
         super().__init__()
-        self._task_info = task_info
+        self._task = task
 
     def run(self):
-        pdfs.extract_to_pdf(self._in_file_path,
-                            extract_mode=extract_mode,
-                            pages=page_collections,
-                            output_mode=output_mode,
-                            out_path=output_path,
-                            out_dir=output_dir)
+        pdfs.extract_to_pdf(**self._task)
         self.completeSignal.emit(True)
 
 
@@ -80,6 +76,10 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.lcd_timer.sinOut.connect(self.on_lcd_tick)
         self.lcd_timer.start()
 
+    def log(self, msg: str):
+        self.statusbar.showMessage(msg)
+        logger.info(msg)
+
     def get_extract_mode(self):
         if self.radioPages.isChecked():
             return ExtractMode.Pages
@@ -105,10 +105,10 @@ class MainUI(QMainWindow, Ui_MainWindow):
             return None
 
     def on_trigger_about_version(self):
-        QMessageBox.information(None, '关于', '版本号：0.0.1')
+        QMessageBox.information(None, '关于', f'版本号：{_VERSION}')
 
     def on_open_to_select_clicked(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/", "*.pdf")
+        file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/", filter="*.pdf")
         self.editOpenedFile.setText(file_path)
 
     def on_open_output_path_clicked(self):
@@ -120,7 +120,6 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.editOutputDir.setText(dir_path)
 
     def on_extract_mode_toggled(self, checked: bool):
-        print(self.sender().text(), checked)
         if self.sender() == self.radioPages:
             self.editPages.setEnabled(checked)
         elif self.sender() == self.radioPageStarts:
@@ -133,20 +132,19 @@ class MainUI(QMainWindow, Ui_MainWindow):
             elif self.sender() == self.radioSaveMerge:
                 self.stackedOutout.setCurrentIndex(1)
 
-    def on_unlocked_successful(self, file_path):
-        self.pdfWorker = PdfWorker({"in_path": file_path,
-                                    "extract_mode": extract_mode,
-                                    "pages": page_collections,
-                                    "output_mode": output_mode,
-                                    "out_path": output_path,
-                                    "out_dir": output_dir})
+    def on_unlocked_successful(self, **kwargs):
+        self.log('decrypt:finish...')
+        self.log('process:start')
+        self.pdfWorker = PdfWorker(kwargs)
         self.pdfWorker.completeSignal.connect(self.on_process_completed)
         self.pdfWorker.start()
 
     def on_process_completed(self, result):
         if result:
+            self.log('process:success...')
             QMessageBox.information(None, '提示', '操作成功！')
         else:
+            self.log('process:fail...')
             QMessageBox.information(None, '提示', '操作失败！')
 
     def on_lcd_tick(self, sec):
@@ -176,7 +174,14 @@ class MainUI(QMainWindow, Ui_MainWindow):
         page_collections = self.get_page_collections()
 
         self.unlockWorker = UnlockWorker(opened_file_path)
-        self.unlockWorker.unlockSignal.connect(lambda: self.on_unlocked_successful())
+        self.unlockWorker.unlockSignal.connect(lambda final_in_file_path: self.on_unlocked_successful(
+            in_path=final_in_file_path,
+            extract_mode=extract_mode,
+            pages=page_collections,
+            output_mode=output_mode,
+            out_path=output_path,
+            out_dir=output_dir))
+        self.log('decrypt:start...')
         self.unlockWorker.start()
 
 

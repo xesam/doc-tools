@@ -79,7 +79,7 @@ def extract_to_pdf(in_path=None,
                    out_path=None,
                    out_dir=None):
     """抽取到一个合并的文件中"""
-    in_pdf_file_path = prepare_unlock(in_pdf_file_path)
+    in_pdf_file_path = prepare_unlock(in_path)
     with open(in_pdf_file_path, 'rb') as in_pdf_file:
         in_pdf = PdfFileReader(in_pdf_file)
         if extract_mode == ExtractMode.Pages:

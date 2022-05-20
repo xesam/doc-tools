@@ -1,6 +1,10 @@
 import logging
+import sys
 
-logger = logging.getLogger('app')
-logger.setLevel(logging)
-
-logger.debug('111111111')
+logging.basicConfig(filename='app.log',
+                    format='%(levelname) s%(asctime)s %(message)s',
+                    level=logging.NOTSET,
+                    encoding='utf-8')
+logger = logging.getLogger('std')
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler(sys.stdout))
