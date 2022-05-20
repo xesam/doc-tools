@@ -13,29 +13,47 @@ cgitb.enable(format='text')
 
 
 class UnlockWorker(QThread):
-    unlockSignal = pyqtSignal(object)
+    unlockSignal = pyqtSignal(str)
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, in_file_path):
+        super().__init__()
+        self._in_file_path = in_file_path
 
-    def run(self):
-        pass
-
-    def start(self, priority=None):
-        pass
+    def run(self) -> None:
+        print('start')
+        unlocked = pdfs.prepare_unlock(self._in_file_path)
+        self.unlockSignal.emit(unlocked)
 
 
 class PdfWorker(QThread):
-    completeSignal = pyqtSignal(object)
+    resultSignal = pyqtSignal(object)
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, in_file_path):
+        super().__init__()
+        self._in_file_path = in_file_path
 
     def run(self):
-        pass
+        pdfs.extract_to_pdf(self._in_file_path,
+                            extract_mode=extract_mode,
+                            pages=page_collections,
+                            output_mode=output_mode,
+                            out_path=output_path,
+                            out_dir=output_dir)
+        self.resultSignal.emit(True)
 
-    def start(self, priority=None):
-        pass
+
+class LcdTimer(QThread):
+    sinOut: pyqtSignal = pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+        self._index = 1;
+
+    def run(self) -> None:
+        while (True):
+            self.sinOut.emit(f'{self._index}')
+            self._index += 1
+            self.sleep(1)
 
 
 class MainUI(QMainWindow, Ui_MainWindow):
@@ -57,6 +75,10 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.btnStart.clicked.connect(self.on_start_clicked)
         self.btnOpenOutputPath.clicked.connect(self.on_open_output_path_clicked)
         self.btnOpenOutputDir.clicked.connect(self.on_open_output_dir_clicked)
+
+        self.lcd_timer = LcdTimer()
+        self.lcd_timer.sinOut.connect(self.on_lcd_tick)
+        self.lcd_timer.start()
 
     def get_extract_mode(self):
         if self.radioPages.isChecked():
@@ -111,6 +133,19 @@ class MainUI(QMainWindow, Ui_MainWindow):
             elif self.sender() == self.radioSaveMerge:
                 self.stackedOutout.setCurrentIndex(1)
 
+    def on_unlocked_successful(self, file_path):
+        print(file_path)
+        pass
+
+    def on_process_completed(self, result):
+        if result:
+            QMessageBox.information(None, '提示', '操作成功！')
+        else:
+            QMessageBox.information(None, '提示', '操作失败！')
+
+    def on_lcd_tick(self, sec):
+        self.lcdRunning.display(sec)
+
     def on_start_clicked(self):
         opened_file_path = self.editOpenedFile.text()
         if len(opened_file_path) == 0:
@@ -133,12 +168,14 @@ class MainUI(QMainWindow, Ui_MainWindow):
 
         extract_mode = self.get_extract_mode()
         page_collections = self.get_page_collections()
-        pdfs.extract_to_pdf(opened_file_path,
-                            extract_mode=extract_mode,
-                            pages=page_collections,
-                            output_mode=output_mode,
-                            out_path=output_path,
-                            out_dir=output_dir)
+
+        self.unlockWorker = UnlockWorker(opened_file_path)
+        self.unlockWorker.unlockSignal.connect(self.on_unlocked_successful)
+        self.unlockWorker.start()
+
+        self.pdfWorker = PdfWorker(opened_file_path)
+        self.pdfWorker.resultSignal.connect(self.on_process_successful)
+        self.pdfWorker.start()
 
 
 if __name__ == "__main__":

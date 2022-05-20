@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(890, 621)
+        MainWindow.resize(890, 641)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -143,6 +143,9 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout_2.addWidget(self.label_2, 0, 0, 1, 1)
         self.stackedOutout.addWidget(self.page_2)
+        self.lcdRunning = QtWidgets.QLCDNumber(self.centralwidget)
+        self.lcdRunning.setGeometry(QtCore.QRect(150, 530, 101, 41))
+        self.lcdRunning.setObjectName("lcdRunning")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 890, 26))

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>890</width>
-    <height>621</height>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -297,6 +297,16 @@
       </layout>
      </widget>
     </widget>
+   </widget>
+   <widget class="QLCDNumber" name="lcdRunning">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>530</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
