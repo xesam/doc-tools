@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>890</width>
-    <height>730</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -308,8 +308,32 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="actionFileSelect"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>关于</string>
+    </property>
+    <addaction name="actionAboutVersion"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAboutVersion">
+   <property name="text">
+    <string>版本</string>
+   </property>
+  </action>
+  <action name="actionFileSelect">
+   <property name="text">
+    <string>选择文件</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

@@ -2,6 +2,8 @@ import os
 
 import pikepdf
 from PyPDF2 import PdfFileReader, PdfFileWriter
+from pdfs.modes import ExtractMode, OutputMode
+from pdfs.pages import OddPageCollection, EvenPageCollection, FragmentPage
 
 
 def _extract_range(in_pdf, page_collection):
@@ -46,6 +48,7 @@ def prepare_unlock(in_file_path):
 
 def extract_to_merged_pdf(in_pdf_file_path, out_pdf_file_path, *page_collections):
     """抽取到一个合并的文件中"""
+    in_pdf_file_path = prepare_unlock(in_pdf_file_path)
     with open(in_pdf_file_path, 'rb') as in_pdf_file:
         in_pdf = PdfFileReader(in_pdf_file)
         with open(out_pdf_file_path, 'ab') as out_pdf_file:
@@ -56,6 +59,7 @@ def extract_to_merged_pdf(in_pdf_file_path, out_pdf_file_path, *page_collections
 
 def extract_to_diff_pdf(in_pdf_file_path, out_pdf_dir, *page_collections):
     """抽取到一个各自的文件中"""
+    in_pdf_file_path = prepare_unlock(in_pdf_file_path)
     with open(in_pdf_file_path, 'rb') as in_pdf_file:
         in_pdf = PdfFileReader(in_pdf_file)
         for page_collection in page_collections:
@@ -66,3 +70,38 @@ def extract_to_diff_pdf(in_pdf_file_path, out_pdf_dir, *page_collections):
                 out_pdf = PdfFileWriter()
                 _extract_range_to_pdf(in_pdf, out_pdf, page_collection)
                 out_pdf.write(out_pdf_file)
+
+
+def extract_to_pdf(in_pdf_file_path,
+                   extract_mode=ExtractMode.Pages,
+                   pages=None,
+                   output_mode=OutputMode.Merge,
+                   out_path=None,
+                   out_dir=None):
+    """抽取到一个合并的文件中"""
+    in_pdf_file_path = prepare_unlock(in_pdf_file_path)
+    with open(in_pdf_file_path, 'rb') as in_pdf_file:
+        in_pdf = PdfFileReader(in_pdf_file)
+        if extract_mode == ExtractMode.Pages:
+            page_collections = pages
+        elif extract_mode == ExtractMode.PageStarts:
+            page_collections = FragmentPage(in_pdf.numPages, pages)
+        elif extract_mode == ExtractMode.OddPages:
+            page_collections = OddPageCollection(in_pdf.numPages)
+        elif extract_mode == ExtractMode.EvenPages:
+            page_collections = EvenPageCollection(in_pdf.numPages)
+
+        if output_mode == OutputMode.Merge:
+            with open(out_path, 'ab') as out_pdf_file:
+                out_pdf = PdfFileWriter()
+                _extract_ranges_to_pdf(in_pdf, out_pdf, *page_collections)
+                out_pdf.write(out_pdf_file)
+        elif output_mode == OutputMode.Diff:
+            for page_collection in page_collections:
+                input_basename = os.path.basename(in_pdf_file_path)
+                output_basename = add_suffix_to_basename(input_basename, page_collection.get_collection_name())
+                out_pdf_file_path = os.path.join(out_dir, output_basename)
+                with open(out_pdf_file_path, 'ab') as out_pdf_file:
+                    out_pdf = PdfFileWriter()
+                    _extract_range_to_pdf(in_pdf, out_pdf, page_collection)
+                    out_pdf.write(out_pdf_file)

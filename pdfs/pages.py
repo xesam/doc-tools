@@ -49,6 +49,19 @@ class EvenPageCollection(PageCollection):
         return f'偶数页'
 
 
-def parse_fragments(page_count, *fragment_starts):
-    fragment_ends = list(fragment_starts)[1:] + [page_count + 1]
-    return [RangePageCollection(start, end - 1) for start, end in zip(fragment_starts, fragment_ends)]
+class FragmentPage(PageCollection):
+    def __init__(self, pages_count, fragment_starts):
+        self._pages_count = pages_count
+        self._fragment_starts = fragment_starts
+
+    def __iter__(self):
+        fragment_ends = list(self._fragment_starts)[1:] + [self._pages_count + 1]
+        return iter([RangePageCollection(start, end - 1) for start, end in zip(self._fragment_starts, fragment_ends)])
+
+    def get_collection_name(self):
+        return f'分割集'
+
+#
+# def parse_fragments(page_count, *fragment_starts):
+#     fragment_ends = list(fragment_starts)[1:] + [page_count + 1]
+#     return [RangePageCollection(start, end - 1) for start, end in zip(fragment_starts, fragment_ends)]

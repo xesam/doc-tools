@@ -2,13 +2,12 @@ import cgitb
 import sys
 
 from MainWin import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from gui.modes import ExtractMode, OutputMode
-from pdfs.pages import RangePageCollection, OddPageCollection, EvenPageCollection
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from gui import parser
 from pdfs import pdfs
+from pdfs.modes import ExtractMode, OutputMode
 
 cgitb.enable(format='text')
 
@@ -43,6 +42,11 @@ class MainUI(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.setWindowIcon(QIcon('./assets/logo.png'))
+
+        self.actionFileSelect.triggered.connect(self.on_open_to_select_clicked)
+        self.actionAboutVersion.triggered.connect(self.on_trigger_about_version)
+
         self.btnOpenFile.clicked.connect(self.on_open_to_select_clicked)
         self.radioPages.toggled.connect(self.on_extract_mode_toggled)
         self.radioPageStarts.toggled.connect(self.on_extract_mode_toggled)
@@ -75,10 +79,11 @@ class MainUI(QMainWindow, Ui_MainWindow):
             return parser.parse_pages(self.editPages.text())
         elif self.radioPageStarts.isChecked():
             return parser.parse_starts(self.editPageStarts.text())
-        elif self.radioOddPages.isChecked():
-            return OddPageCollection()
-        elif self.radioEvenPages.isChecked():
-            return OddPageCollection()
+        else:
+            return None
+
+    def on_trigger_about_version(self):
+        QMessageBox.information(None, '关于', '版本号：0.0.1')
 
     def on_open_to_select_clicked(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/", "*.pdf")
@@ -107,24 +112,34 @@ class MainUI(QMainWindow, Ui_MainWindow):
                 self.stackedOutout.setCurrentIndex(1)
 
     def on_start_clicked(self):
-
-        page_collections = self.get_page_collections()
-        print(page_collections)
-
         opened_file_path = self.editOpenedFile.text()
         if len(opened_file_path) == 0:
             QMessageBox.information(None, '提示', '请先选择要处理的文件')
             return
 
         output_mode = self.get_output_mode()
+        output_dir = None
+        output_path = None
         if output_mode == OutputMode.Diff:
-            if len(self.editOutputDir.text()) == 0:
+            output_dir = self.editOutputDir.text()
+            if len(output_dir) == 0:
                 QMessageBox.information(None, '提示', '请选择输出文件夹')
                 return
         elif output_mode == OutputMode.Merge:
-            if len(self.editOutputPath.text()) == 0:
+            output_path = self.editOutputPath.text()
+            if len(output_path) == 0:
                 QMessageBox.information(None, '提示', '请选择输出文件')
                 return
+
+        extract_mode = self.get_extract_mode()
+        page_collections = self.get_page_collections()
+        pdfs.extract_to_pdf(opened_file_path,
+                            extract_mode=extract_mode,
+                            pages=page_collections,
+                            output_mode=output_mode,
+                            out_path=output_path,
+                            out_dir=output_dir)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
