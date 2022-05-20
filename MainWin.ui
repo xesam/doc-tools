@@ -329,6 +329,7 @@
      <string>关于</string>
     </property>
     <addaction name="actionAboutVersion"/>
+    <addaction name="actionAboutCaiHongPi"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAbout"/>
@@ -342,6 +343,11 @@
   <action name="actionFileSelect">
    <property name="text">
     <string>选择文件</string>
+   </property>
+  </action>
+  <action name="actionAboutCaiHongPi">
+   <property name="text">
+    <string>肖哥的彩虹屁</string>
    </property>
   </action>
  </widget>

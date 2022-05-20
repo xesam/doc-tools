@@ -1,10 +1,11 @@
 import cgitb
 import sys
 
-from MainWin import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from MainWin import *
+from CaiHongPiDialog import *
 from gui import parser
 from pdfs import pdfs
 from pdfs.modes import ExtractMode, OutputMode
@@ -60,6 +61,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
 
         self.actionFileSelect.triggered.connect(self.on_open_to_select_clicked)
         self.actionAboutVersion.triggered.connect(self.on_trigger_about_version)
+        self.actionAboutCaiHongPi.triggered.connect(self.on_trigger_about_caihongpi)
 
         self.btnOpenFile.clicked.connect(self.on_open_to_select_clicked)
         self.radioPages.toggled.connect(self.on_extract_mode_toggled)
@@ -106,6 +108,10 @@ class MainUI(QMainWindow, Ui_MainWindow):
 
     def on_trigger_about_version(self):
         QMessageBox.information(None, '关于', f'版本号：{_VERSION}')
+
+    def on_trigger_about_caihongpi(self):
+        dialog = CaiHongPiDialog(self)
+        dialog.show()
 
     def on_open_to_select_clicked(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/", filter="*.pdf")

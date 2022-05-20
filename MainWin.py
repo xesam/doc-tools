@@ -162,8 +162,11 @@ class Ui_MainWindow(object):
         self.actionAboutVersion.setObjectName("actionAboutVersion")
         self.actionFileSelect = QtWidgets.QAction(MainWindow)
         self.actionFileSelect.setObjectName("actionFileSelect")
+        self.actionAboutCaiHongPi = QtWidgets.QAction(MainWindow)
+        self.actionAboutCaiHongPi.setObjectName("actionAboutCaiHongPi")
         self.menuFile.addAction(self.actionFileSelect)
         self.menuAbout.addAction(self.actionAboutVersion)
+        self.menuAbout.addAction(self.actionAboutCaiHongPi)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
@@ -198,3 +201,4 @@ class Ui_MainWindow(object):
         self.menuAbout.setTitle(_translate("MainWindow", "关于"))
         self.actionAboutVersion.setText(_translate("MainWindow", "版本"))
         self.actionFileSelect.setText(_translate("MainWindow", "选择文件"))
+        self.actionAboutCaiHongPi.setText(_translate("MainWindow", "肖哥的彩虹屁"))
