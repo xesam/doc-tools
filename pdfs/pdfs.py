@@ -54,12 +54,14 @@ def extract_to_merged_pdf(in_pdf_file_path, out_pdf_file_path, *page_collections
             out_pdf.write(out_pdf_file)
 
 
-def extract_to_diff_pdf(in_pdf_file_path, *page_collections):
+def extract_to_diff_pdf(in_pdf_file_path, out_pdf_dir, *page_collections):
     """抽取到一个各自的文件中"""
     with open(in_pdf_file_path, 'rb') as in_pdf_file:
         in_pdf = PdfFileReader(in_pdf_file)
         for page_collection in page_collections:
-            out_pdf_file_path = add_suffix_to_basename(in_pdf_file_path, page_collection.get_collection_name())
+            input_basename = os.path.basename(in_pdf_file_path)
+            output_basename = add_suffix_to_basename(input_basename, page_collection.get_collection_name())
+            out_pdf_file_path = os.path.join(out_pdf_dir, output_basename)
             with open(out_pdf_file_path, 'ab') as out_pdf_file:
                 out_pdf = PdfFileWriter()
                 _extract_range_to_pdf(in_pdf, out_pdf, page_collection)

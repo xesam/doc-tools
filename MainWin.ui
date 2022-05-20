@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>890</width>
-    <height>650</height>
+    <height>730</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,9 @@
       <widget class="QLineEdit" name="editOpenedFile">
        <property name="readOnly">
         <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>请选择输入文件</string>
        </property>
       </widget>
      </item>
@@ -51,9 +54,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>380</y>
+      <y>350</y>
       <width>851</width>
-      <height>101</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="title">
@@ -65,7 +68,7 @@
        <x>10</x>
        <y>30</y>
        <width>381</width>
-       <height>51</height>
+       <height>41</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -98,7 +101,7 @@
    <widget class="QPushButton" name="btnStart">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>20</x>
       <y>530</y>
       <width>121</width>
       <height>41</height>
@@ -114,7 +117,7 @@
       <x>20</x>
       <y>100</y>
       <width>851</width>
-      <height>261</height>
+      <height>231</height>
      </rect>
     </property>
     <property name="title">
@@ -126,7 +129,7 @@
        <x>10</x>
        <y>20</y>
        <width>831</width>
-       <height>231</height>
+       <height>191</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -206,6 +209,95 @@
      </layout>
     </widget>
    </widget>
+   <widget class="QStackedWidget" name="stackedOutout">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>440</y>
+      <width>851</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="page">
+     <widget class="QWidget" name="gridLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>841</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="editOutputDir">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="placeholderText">
+          <string>请选择输出文件夹</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>选择输出文件夹：</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="btnOpenOutputDir">
+         <property name="text">
+          <string>选择</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_2">
+     <widget class="QWidget" name="gridLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>841</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="editOutputPath">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="placeholderText">
+          <string>请选择输出文件</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="btnOpenOutputPath">
+         <property name="text">
+          <string>选择</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>选择输出文件：</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -213,7 +305,7 @@
      <x>0</x>
      <y>0</y>
      <width>890</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

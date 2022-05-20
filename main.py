@@ -1,28 +1,42 @@
-import sys
 import cgitb
+import sys
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from pdfs.modes import ExtractMode, OutputMode
-from pdfs.pages import RangePageCollection, parse_fragments
 from MainWin import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from gui.modes import ExtractMode, OutputMode
+from pdfs.pages import RangePageCollection, OddPageCollection, EvenPageCollection
+from gui import parser
+from pdfs import pdfs
 
 cgitb.enable(format='text')
 
 
-def parse_page(pagination: str):
-    pages = [int(i) for i in pagination.split('-')]
-    return RangePageCollection(pages[0], pages[-1])
+class UnlockWorker(QThread):
+    unlockSignal = pyqtSignal(object)
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+    def run(self):
+        pass
+
+    def start(self, priority=None):
+        pass
 
 
-def parse_pages(paginations: str):
-    pages = [parse_page(i) for i in paginations.split(',')]
-    return pages
+class PdfWorker(QThread):
+    completeSignal = pyqtSignal(object)
 
+    def __init__(self, *args):
+        super().__init__(*args)
 
-def get_starts(paginations: str):
-    return [int(i) for i in paginations.split(',')]
+    def run(self):
+        pass
+
+    def start(self, priority=None):
+        pass
 
 
 class MainUI(QMainWindow, Ui_MainWindow):
@@ -37,6 +51,8 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.radioSaveDiff.toggled.connect(self.on_output_mode_toggled)
         self.radioSaveMerge.toggled.connect(self.on_output_mode_toggled)
         self.btnStart.clicked.connect(self.on_start_clicked)
+        self.btnOpenOutputPath.clicked.connect(self.on_open_output_path_clicked)
+        self.btnOpenOutputDir.clicked.connect(self.on_open_output_dir_clicked)
 
     def get_extract_mode(self):
         if self.radioPages.isChecked():
@@ -54,9 +70,27 @@ class MainUI(QMainWindow, Ui_MainWindow):
         elif self.radioSaveMerge.isChecked():
             return OutputMode.Merge
 
+    def get_page_collections(self):
+        if self.radioPages.isChecked():
+            return parser.parse_pages(self.editPages.text())
+        elif self.radioPageStarts.isChecked():
+            return parser.parse_starts(self.editPageStarts.text())
+        elif self.radioOddPages.isChecked():
+            return OddPageCollection()
+        elif self.radioEvenPages.isChecked():
+            return OddPageCollection()
+
     def on_open_to_select_clicked(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/", "*.pdf")
         self.editOpenedFile.setText(file_path)
+
+    def on_open_output_path_clicked(self):
+        file_path, _ = QFileDialog.getSaveFileName(self, "保存为文件", filter="*.pdf")
+        self.editOutputPath.setText(file_path)
+
+    def on_open_output_dir_clicked(self):
+        dir_path = QFileDialog.getExistingDirectory(self, "保存到文件夹")
+        self.editOutputDir.setText(dir_path)
 
     def on_extract_mode_toggled(self, checked: bool):
         print(self.sender().text(), checked)
@@ -66,17 +100,31 @@ class MainUI(QMainWindow, Ui_MainWindow):
             self.editPageStarts.setEnabled(checked)
 
     def on_output_mode_toggled(self, checked: bool):
-        print(self.sender().text(), checked)
+        if checked:
+            if self.sender() == self.radioSaveDiff:
+                self.stackedOutout.setCurrentIndex(0)
+            elif self.sender() == self.radioSaveMerge:
+                self.stackedOutout.setCurrentIndex(1)
 
     def on_start_clicked(self):
-        extract_mode = self.get_extract_mode()
-        print(self.get_extract_mode())
-        print(self.editPages.text())
-        print(parse_pages(self.editPages.text()))
-        print(self.editPageStarts.text())
-        print(get_starts(self.editPageStarts.text()))
-        print(self.get_output_mode())
 
+        page_collections = self.get_page_collections()
+        print(page_collections)
+
+        opened_file_path = self.editOpenedFile.text()
+        if len(opened_file_path) == 0:
+            QMessageBox.information(None, '提示', '请先选择要处理的文件')
+            return
+
+        output_mode = self.get_output_mode()
+        if output_mode == OutputMode.Diff:
+            if len(self.editOutputDir.text()) == 0:
+                QMessageBox.information(None, '提示', '请选择输出文件夹')
+                return
+        elif output_mode == OutputMode.Merge:
+            if len(self.editOutputPath.text()) == 0:
+                QMessageBox.information(None, '提示', '请选择输出文件')
+                return
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
