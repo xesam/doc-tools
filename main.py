@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from pdfs.modes import ExtractMode, OutputMode
-from pdfs.pages import RangePages, parse_fragments
+from pdfs.pages import RangePageCollection, parse_fragments
 from MainWin import *
 
 cgitb.enable(format='text')
@@ -13,7 +13,7 @@ cgitb.enable(format='text')
 
 def parse_page(pagination: str):
     pages = [int(i) for i in pagination.split('-')]
-    return RangePages(pages[0], pages[-1])
+    return RangePageCollection(pages[0], pages[-1])
 
 
 def parse_pages(paginations: str):
@@ -55,7 +55,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
             return OutputMode.Merge
 
     def on_open_to_select_clicked(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/")
+        file_path, _ = QFileDialog.getOpenFileName(self, "选取 PDF 文件", "C:/", "*.pdf")
         self.editOpenedFile.setText(file_path)
 
     def on_extract_mode_toggled(self, checked: bool):
@@ -69,6 +69,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
         print(self.sender().text(), checked)
 
     def on_start_clicked(self):
+        extract_mode = self.get_extract_mode()
         print(self.get_extract_mode())
         print(self.editPages.text())
         print(parse_pages(self.editPages.text()))
