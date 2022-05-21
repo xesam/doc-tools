@@ -103,7 +103,7 @@
      <rect>
       <x>20</x>
       <y>530</y>
-      <width>121</width>
+      <width>151</width>
       <height>41</height>
      </rect>
     </property>
@@ -297,16 +297,6 @@
       </layout>
      </widget>
     </widget>
-   </widget>
-   <widget class="QLCDNumber" name="lcdRunning">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>530</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -1,30 +1,31 @@
 import cgitb
 import sys
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from MainWin import *
 from CaiHongPiDialog import *
+from MainWin import *
 from gui import parser
+from loggers import logger
 from pdfs import pdfs
 from pdfs.modes import ExtractMode, OutputMode
-from loggers import logger
 
 cgitb.enable(format='text')
 _VERSION = '0.0.1'
 
 
 class UnlockWorker(QThread):
-    unlockSignal = pyqtSignal(str)
+    success = pyqtSignal(object)
+    fail = pyqtSignal(object)
 
     def __init__(self, in_file_path):
         super().__init__()
         self._in_file_path = in_file_path
 
     def run(self) -> None:
-        unlocked = pdfs.prepare_unlock(self._in_file_path)
-        self.unlockSignal.emit(unlocked)
+        try:
+            unlocked = pdfs.prepare_unlock(self._in_file_path)
+            self.success.emit(unlocked)
+        except:
+            self.fail.emit(False)
 
 
 class PdfWorker(QThread):
@@ -39,18 +40,22 @@ class PdfWorker(QThread):
         self.completeSignal.emit(True)
 
 
-class LcdTimer(QThread):
+class IndicatorTimer(QThread):
     sinOut: pyqtSignal = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
         self._index = 1;
+        self._interruped = False
 
     def run(self) -> None:
-        while (True):
+        while not self._interruped:
             self.sinOut.emit(f'{self._index}')
             self._index += 1
             self.sleep(1)
+
+    def interrupt(self):
+        self._interruped = True
 
 
 class MainUI(QMainWindow, Ui_MainWindow):
@@ -73,10 +78,6 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.btnStart.clicked.connect(self.on_start_clicked)
         self.btnOpenOutputPath.clicked.connect(self.on_open_output_path_clicked)
         self.btnOpenOutputDir.clicked.connect(self.on_open_output_dir_clicked)
-
-        self.lcd_timer = LcdTimer()
-        self.lcd_timer.sinOut.connect(self.on_lcd_tick)
-        self.lcd_timer.start()
 
     def log(self, msg: str):
         self.statusbar.showMessage(msg)
@@ -138,6 +139,11 @@ class MainUI(QMainWindow, Ui_MainWindow):
             elif self.sender() == self.radioSaveMerge:
                 self.stackedOutout.setCurrentIndex(1)
 
+    def resetStartAction(self):
+        self.lcd_timer.interrupt()
+        self.btnStart.setEnabled(True)
+        self.btnStart.setText('开始')
+
     def on_unlocked_successful(self, **kwargs):
         self.log('decrypt:finish...')
         self.log('process:start')
@@ -145,7 +151,12 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.pdfWorker.completeSignal.connect(self.on_process_completed)
         self.pdfWorker.start()
 
+    def on_unlocked_fail(self, **kwargs):
+        self.resetStartAction()
+        QMessageBox.information(None, '提示', '操作[unlock]失败！')
+
     def on_process_completed(self, result):
+        self.resetStartAction()
         if result:
             self.log('process:success...')
             QMessageBox.information(None, '提示', '操作成功！')
@@ -153,8 +164,8 @@ class MainUI(QMainWindow, Ui_MainWindow):
             self.log('process:fail...')
             QMessageBox.information(None, '提示', '操作失败！')
 
-    def on_lcd_tick(self, sec):
-        self.lcdRunning.display(sec)
+    def on_timer_tick(self, sec):
+        self.btnStart.setText(f'正在处理...{sec}')
 
     def on_start_clicked(self):
         opened_file_path = self.editOpenedFile.text()
@@ -176,17 +187,23 @@ class MainUI(QMainWindow, Ui_MainWindow):
                 QMessageBox.information(None, '提示', '请选择输出文件')
                 return
 
+        self.btnStart.setEnabled(False)
+        self.lcd_timer = IndicatorTimer()
+        self.lcd_timer.sinOut.connect(self.on_timer_tick)
+        self.lcd_timer.start()
+
         extract_mode = self.get_extract_mode()
         page_collections = self.get_page_collections()
 
         self.unlockWorker = UnlockWorker(opened_file_path)
-        self.unlockWorker.unlockSignal.connect(lambda final_in_file_path: self.on_unlocked_successful(
+        self.unlockWorker.success.connect(lambda final_in_file_path: self.on_unlocked_successful(
             in_path=final_in_file_path,
             extract_mode=extract_mode,
             pages=page_collections,
             output_mode=output_mode,
             out_path=output_path,
             out_dir=output_dir))
+        self.unlockWorker.fail.connect(self.on_unlocked_fail)
         self.log('decrypt:start...')
         self.unlockWorker.start()
 
