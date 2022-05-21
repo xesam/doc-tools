@@ -1,4 +1,3 @@
-import PyQt5.QtGui
 from CaiHongPi import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -22,12 +21,64 @@ class CaiHongPi(QWidget):
         super().__init__(*args)
 
         self.frames = 0
-        self.eye_height = 30
+        self.eye_height = 50
         self.mouth_width = 50
 
         self.simple_frame = SimpleFrame()
         self.simple_frame.signal.connect(self.do_update)
         self.simple_frame.start()
+
+    def testDraw(self, event: QtGui.QPaintEvent) -> None:
+        painer = QPainter(self)
+        painer.begin(self)
+        pen = QPen()
+        pen.setWidth(4)
+        pen.setStyle(Qt.PenStyle.SolidLine)
+        painer.setPen(pen)
+        painer.drawLine(100, 75, 100, 125)
+        painer.drawLine(150, 75, 150, 125)
+        painer.drawLine(100, 150, 150, 150)
+
+        painer.drawArc(QRect(50, 30, 150, 150), 0, 360 * 16)
+
+        painer.drawLine(125, 180, 125, 280)
+        painer.drawLine(125, 280, 50, 380)
+        painer.drawLine(125, 280, 200, 280)
+        painer.drawLine(200, 280, 200, 380)
+
+        painer.drawLine(125, 220, 240, 220)
+        painer.drawLine(240, 220, 240, 200)
+        painer.drawLine(125, 240, 240, 240)
+        painer.drawLine(240, 240, 240, 260)
+
+        lovePath = QPainterPath()
+        lovePathA1 = QPoint(280, 200)
+        lovePathA2 = QPoint(350, 200)
+        lovePathA3 = QPoint(420, 200)
+        lovePathA4 = QPoint(350, 310)
+
+        lovePath.moveTo(lovePathA2)
+        lovePath.cubicTo(lovePathA2, QPoint(315, 150), lovePathA1)
+        lovePath.cubicTo(lovePathA1, QPoint(250, 250), lovePathA4)
+        lovePath.moveTo(lovePathA2)
+        lovePath.cubicTo(lovePathA2, QPoint(385, 150), lovePathA3)
+        lovePath.cubicTo(lovePathA3, QPoint(450, 250), lovePathA4)
+
+        brush = QBrush(Qt.SolidPattern)
+        brush.setColor(Qt.red)
+        painer.fillPath(lovePath, brush)
+
+        painer.end()
+
+    def animDrawLine(self, _from, to, percent, painer):
+        from_x, from_y = _from
+        to_x, to_y = to
+        max_delta_x = to_x - from_x
+        max_delta_y = to_y - from_y
+
+        current_x = from_x + int(max_delta_x * min(1, percent))
+        current_y = from_y + int(max_delta_y * min(1, percent))
+        painer.drawLine(from_x, from_y, current_x, current_y)
 
     def paintEvent(self, event: QtGui.QPaintEvent) -> None:
         painer = QPainter(self)
@@ -37,27 +88,62 @@ class CaiHongPi(QWidget):
         pen.setStyle(Qt.PenStyle.SolidLine)
         painer.setPen(pen)
         if self.frames >= 0:
-            print('第一个眼睛')
-            painer.drawLine(150, 100, 150, 100 + min(self.eye_height, int(self.eye_height * self.frames / _FPS)))
+            stage_percent = (self.frames - _FPS * 0) / _FPS
+            self.animDrawLine((100, 75), (100, 125), stage_percent, painer)
         if self.frames >= _FPS:
-            print('第二个眼睛')
-            painer.drawLine(200, 100, 200, 100 + min(self.eye_height, int(self.eye_height * (self.frames - _FPS) / _FPS)))
+            stage_percent = (self.frames - _FPS * 1) / _FPS
+            self.animDrawLine((150, 75), (150, 125), stage_percent, painer)
         if self.frames >= _FPS * 2:
-            print('嘴巴')
-            painer.drawLine(150, 180, 150 + min(self.mouth_width, int(self.mouth_width * (self.frames - _FPS * 2) / _FPS)), 180)
+            stage_percent = (self.frames - _FPS * 2) / _FPS
+            self.animDrawLine((100, 150), (150, 150), stage_percent, painer)
         if self.frames >= _FPS * 3:
-            print('头')
+            stage_frames = self.frames - _FPS * 3
+            stage_percent = (self.frames - _FPS * 1) / _FPS
+            degrees = min(360, stage_frames / _FPS * 360)
+            painer.drawArc(QRect(50, 30, 150, 150), 0, degrees * 16)
         if self.frames >= _FPS * 4:
-            print('身体')
+            stage_percent = (self.frames - _FPS * 4) / _FPS
+            self.animDrawLine((125, 180), (125, 280), stage_percent, painer)
         if self.frames >= _FPS * 5:
-            print('左脚')
+            stage_percent = (self.frames - _FPS * 5) / _FPS
+            self.animDrawLine((125, 280), (50, 380), stage_percent, painer)
         if self.frames >= _FPS * 6:
-            print('右脚')
+            stage_percent = (self.frames - _FPS * 6) / _FPS
+            self.animDrawLine((125, 280), (200, 280), stage_percent, painer)
         if self.frames >= _FPS * 7:
-            print('左手')
+            stage_percent = (self.frames - _FPS * 7) / _FPS
+            self.animDrawLine((200, 280), (200, 380), stage_percent, painer)
         if self.frames >= _FPS * 8:
-            print('右手')
-        painer.drawText(100, 100, str(self.frames))
+            stage_percent = (self.frames - _FPS * 8) / _FPS
+            self.animDrawLine((125, 220), (240, 220), stage_percent, painer)
+        if self.frames >= _FPS * 9:
+            stage_percent = (self.frames - _FPS * 9) / _FPS
+            self.animDrawLine((240, 220), (240, 200), stage_percent, painer)
+        if self.frames >= _FPS * 10:
+            stage_percent = (self.frames - _FPS * 10) / _FPS
+            self.animDrawLine((125, 240), (240, 240), stage_percent, painer)
+        if self.frames >= _FPS * 11:
+            stage_percent = (self.frames - _FPS * 11) / _FPS
+            self.animDrawLine((240, 240), (240, 260), stage_percent, painer)
+        if self.frames >= _FPS * 12:
+            stage_percent = (self.frames - _FPS * 12) / _FPS
+            lovePath = QPainterPath()
+            lovePathA1 = QPoint(280, 200)
+            lovePathA2 = QPoint(350, 200)
+            lovePathA3 = QPoint(420, 200)
+            lovePathA4 = QPoint(350, 310)
+
+            lovePath.moveTo(lovePathA2)
+            lovePath.cubicTo(lovePathA2, QPoint(315, 150), lovePathA1)
+            lovePath.cubicTo(lovePathA1, QPoint(250, 250), lovePathA4)
+            lovePath.moveTo(lovePathA2)
+            lovePath.cubicTo(lovePathA2, QPoint(385, 150), lovePathA3)
+            lovePath.cubicTo(lovePathA3, QPoint(450, 250), lovePathA4)
+
+            brush = QBrush(Qt.SolidPattern)
+            color = QColor(255, 0, 0, int(255 * min(1, stage_percent)))
+            brush.setColor(color)
+            painer.fillPath(lovePath, brush)
         painer.end()
 
     def do_update(self):
@@ -81,7 +167,7 @@ class SimpleFrame(QThread):
     def run(self) -> None:
         while not self.interrupted:
             self.signal.emit(True)
-            self.msleep(int(1000 / _FPS))
+            self.msleep(int(500 / _FPS))
 
     def interrupt(self) -> bool:
         self.interrupted = True

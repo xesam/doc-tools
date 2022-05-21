@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CaiHongPiDialog(object):
     def setupUi(self, CaiHongPiDialog):
         CaiHongPiDialog.setObjectName("CaiHongPiDialog")
-        CaiHongPiDialog.resize(800, 500)
+        CaiHongPiDialog.resize(500, 500)
         self.verticalLayoutWidget = QtWidgets.QWidget(CaiHongPiDialog)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 781, 481))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 481, 481))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.dialogLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.dialogLayout.setContentsMargins(0, 0, 0, 0)
