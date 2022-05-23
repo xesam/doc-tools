@@ -1,5 +1,7 @@
 # doc-tools
 
+基于对象的要求，写了一个分割文档的小工具，带界面（PyQT5）。
+
     python 3.9.7
 
 具体依赖参见 [requirements.txt](./requirements.txt)
@@ -21,3 +23,14 @@
 
 1. 将每一份抽取内容分别保存到各自的文件中。
 2. 将所有抽取内容保存为单个文件。
+
+
+### ChangeLog
+
+##### 0.0.1 / 20220521
+1. 支持基本的抽取模式
+
+### Issues
+
+联系方式：xesam@outlook.com
+
