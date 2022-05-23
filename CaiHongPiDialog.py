@@ -1,4 +1,4 @@
-from CaiHongPi import *
+from CaiHongPiUI import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -27,48 +27,6 @@ class CaiHongPi(QWidget):
         self.simple_frame = SimpleFrame()
         self.simple_frame.signal.connect(self.do_update)
         self.simple_frame.start()
-
-    def testDraw(self, event: QtGui.QPaintEvent) -> None:
-        painer = QPainter(self)
-        painer.begin(self)
-        pen = QPen()
-        pen.setWidth(4)
-        pen.setStyle(Qt.PenStyle.SolidLine)
-        painer.setPen(pen)
-        painer.drawLine(100, 75, 100, 125)
-        painer.drawLine(150, 75, 150, 125)
-        painer.drawLine(100, 150, 150, 150)
-
-        painer.drawArc(QRect(50, 30, 150, 150), 0, 360 * 16)
-
-        painer.drawLine(125, 180, 125, 280)
-        painer.drawLine(125, 280, 50, 380)
-        painer.drawLine(125, 280, 200, 280)
-        painer.drawLine(200, 280, 200, 380)
-
-        painer.drawLine(125, 220, 240, 220)
-        painer.drawLine(240, 220, 240, 200)
-        painer.drawLine(125, 240, 240, 240)
-        painer.drawLine(240, 240, 240, 260)
-
-        lovePath = QPainterPath()
-        lovePathA1 = QPoint(280, 200)
-        lovePathA2 = QPoint(350, 200)
-        lovePathA3 = QPoint(420, 200)
-        lovePathA4 = QPoint(350, 310)
-
-        lovePath.moveTo(lovePathA2)
-        lovePath.cubicTo(lovePathA2, QPoint(315, 150), lovePathA1)
-        lovePath.cubicTo(lovePathA1, QPoint(250, 250), lovePathA4)
-        lovePath.moveTo(lovePathA2)
-        lovePath.cubicTo(lovePathA2, QPoint(385, 150), lovePathA3)
-        lovePath.cubicTo(lovePathA3, QPoint(450, 250), lovePathA4)
-
-        brush = QBrush(Qt.SolidPattern)
-        brush.setColor(Qt.red)
-        painer.fillPath(lovePath, brush)
-
-        painer.end()
 
     def animDrawLine(self, _from, to, percent, painer):
         from_x, from_y = _from
