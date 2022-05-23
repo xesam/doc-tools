@@ -1,4 +1,4 @@
-from CaiHongPiUI import *
+from gui.CaiHongPiUI import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *

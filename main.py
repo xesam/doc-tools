@@ -1,9 +1,9 @@
 import cgitb
 import sys
 
-from CaiHongPiDialog import *
-from MainWin import *
-from gui import parser
+from gui.CaiHongPiDialog import *
+from gui.MainWinUI import *
+import input_parser
 from loggers import logger
 from pdfs import pdfs
 from pdfs.modes import ExtractMode, OutputMode
@@ -103,7 +103,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
         if self.radioPages.isChecked():
             return parser.parse_pages(self.editPages.text())
         elif self.radioPageStarts.isChecked():
-            return parser.parse_starts(self.editPageStarts.text())
+            return input_parser.parse_starts(self.editPageStarts.text())
         else:
             return None
 
