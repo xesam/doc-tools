@@ -1,10 +1,15 @@
 # doc-tools
 
-基于对象的要求，写了一个分割文档的小工具，带界面（PyQT5）。
+基于老婆的要求，写了一个分割文档的小工具，带界面（PyQT5）。
 
     python 3.9.7
 
 具体依赖参见 [requirements.txt](./requirements.txt)
+
+
+截图：
+
+![./doc/demo.png](./doc/demo.png)
 
 ## 功能列表
 
