@@ -3,7 +3,7 @@ import sys
 
 from gui.CaiHongPiDialog import *
 from gui.MainWinUI import *
-import input_parser
+import input_parser as parser
 from loggers import logger
 from pdfs import pdfs
 from pdfs.modes import ExtractMode, OutputMode
