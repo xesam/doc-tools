@@ -103,7 +103,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
         if self.radioPages.isChecked():
             return parser.parse_pages(self.editPages.text())
         elif self.radioPageStarts.isChecked():
-            return input_parser.parse_starts(self.editPageStarts.text())
+            return parser.parse_starts(self.editPageStarts.text())
         else:
             return None
 
