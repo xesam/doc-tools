@@ -3,13 +3,12 @@ import sys
 
 from gui.CaiHongPiDialog import *
 from gui.MainWinUI import *
-import input_parser as parser
+from app import args_parser as parser
 from loggers import logger
 from pdfs import pdfs
-from pdfs.modes import ExtractMode, OutputMode
+from app.docs import VERSION, ExtractMode, OutputMode
 
 cgitb.enable(format='text')
-_VERSION = '0.0.1'
 
 
 class UnlockWorker(QThread):
@@ -108,7 +107,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
             return None
 
     def on_trigger_about_version(self):
-        QMessageBox.information(None, '关于', f'版本号：{_VERSION}')
+        QMessageBox.information(None, '关于', f'版本号：{VERSION}')
 
     def on_trigger_about_caihongpi(self):
         dialog = CaiHongPiDialog(self)

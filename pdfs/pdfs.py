@@ -2,8 +2,9 @@ import os
 
 import pikepdf
 from PyPDF2 import PdfFileReader, PdfFileWriter
-from pdfs.modes import ExtractMode, OutputMode
-from pdfs.pages import OddPageCollection, EvenPageCollection, FragmentPage
+from app.docs import ExtractMode, OutputMode
+from app.pages import OddPageCollection, EvenPageCollection, FragmentPage
+from util.path import add_suffix_to_basename
 
 
 def _extract_range(in_pdf, page_collection):
@@ -23,12 +24,6 @@ def _extract_ranges_to_pdf(in_pdf, out_pdf, *page_collections):
     """抽取指定页并添加到 out_pdf 的尾部"""
     for page_range in page_collections:
         _extract_range_to_pdf(in_pdf, out_pdf, page_range)
-
-
-def add_suffix_to_basename(file_path, suffix):
-    fgs = list(os.path.splitext(file_path))
-    fgs[-1:] = ['-', suffix, fgs[-1]]
-    return "".join(fgs)
 
 
 def create_unlock(in_file_path, out_unlock_file_path):

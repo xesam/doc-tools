@@ -1,4 +1,7 @@
+VERSION = '0.0.2'
+
 class ExtractMode:
+    """ """
     Pages = 1
     PageStarts = 2
     OddPages = 3
@@ -6,5 +9,11 @@ class ExtractMode:
 
 
 class OutputMode:
+    """ """
     Diff = 1
     Merge = 2
+
+
+class MergeMode:
+    """ """
+    pass

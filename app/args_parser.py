@@ -1,6 +1,6 @@
 import re
 
-from pdfs.pages import RangePageCollection
+from app.pages import RangePageCollection
 
 RE_SPLITS = re.compile(',|，|\s+')
 
